@@ -19,9 +19,8 @@ class Function:
 class Process:
     """Simulate computer program with process"""
     def __init__(self, name):
-        self.name = name
-        self.callStack = LinkedStack()
-        self.hasException = False
+        self.name = name #sets name for parent process
+        self.callStack = LinkedStack() #sets callstack as linkedstckmethod
 
 
 class SimulatedComputer:
@@ -42,7 +41,7 @@ class SimulatedComputer:
         if command[:4] == "CALL":
             funcName = command.split(" ")[1] #string split and 1st term is the function name
             funcCHE = True if "yes" in command.split(" ")[2] else False
-
+            #CHE = can handle exceptions
             #function's bool (tertiary) which examines using in to avoid
             #string concat errors, resolves as boolean
             #then init a new function that pushes itself to the 
@@ -73,10 +72,7 @@ class SimulatedComputer:
                     self.process.callStack.pop()
                     print(self.process.name + " pop " + self.process.callStack.peek().name + " off call stack for unhanded exception")
                     #for the user to let me knowww let me knowwww
-                    #DUYULOVTHEWAEIDOWENILOVUBOD
-                    #WENILOVNUBOD
-                    #ILOVUBOD
-                    #https://genius.com/Tamar-braxton-let-me-know-lyrics
+
 
 
 
@@ -93,7 +89,9 @@ class LinkedStack:
         self._myNodes = [] #make it "hidden"
     def push(self, entry):
         """Put the entry at the top of the Stack."""
-        self._myNodes[0:0] = [entry] #set the entry at a : iterator in a list at the zeroeth place zero times and set it equal to copy each value of entry
+        self._myNodes[0:0] = [Node(entry)] #set the entry at a : iterator in a list at the zeroeth place zero times and set it equal to copy each value of entry
+        self._myNodes[0].next = self._myNodes[1] #set your node to the next node in the order
+        #this makes the linked list both sequentially and programmatically linked
     def pop(self):
         """Remove and return the value at the top of the stack, 
         raise RuntimeError otherwise"""
@@ -106,7 +104,7 @@ class LinkedStack:
     def peek(self):
         """Return value at the top of the stack otherwise RuntimeError"""
         try:
-            return self._myNodes[0]
+            return self._myNodes[0].entry #returns it as an entry (from Node)
         except IndexError:
             raise RuntimError("Stack is empty")
     def is_empty(self):
