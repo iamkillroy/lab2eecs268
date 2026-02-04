@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 #By Lucas Frias KU EECS 268
 # Lab 2 - Dated Feb 2nd 2026
 #       <@
@@ -52,25 +53,25 @@ class SimulatedComputer:
         if command [:6] == "RETURN":
             #removes a function from the callstack without erro
             poppedFunc = self.process.callStack.pop() #just pop the functon
-            print(self.process.name + " has " + poppedFunc.name + " return")
+            print(self.process.name + " has " + poppedFunc.entry.name + " return")
             #if we're at the end end it already
             if self.process.callStack.is_empty(): #handles exitting
                               print(self.process.name + " Process ended.")
                               sys.exit(0)
-        if command [:5] == "RAISE":
+        if command[:5] == "RAISE":
             #as lane lamping says "oh boy"
             #this function is complicated
             self.process.hasException = True
             #now we go through all processes until we find
             #if and where there's an exception handler
             while not self.process.callStack.is_empty(): #make sure we don't read nothing
-                if self.process.callStack.peek().canHandleExceptions: #() returns the func
+                if self.process.callStack.peek().entry.canHandleExceptions: #() returns the func
                     #and then we can access the values inside of the init class
-                    print(self.process.name + " has "+ self.process.callStack.peek().name + " handle the exception and keep running")
+                    print(self.process.name + " has "+ self.process.callStack.peek().entry.name + " handle the exception and keep running")
                     break
                 else: #the function can't handle exceptions, pop off of stack and announce it
                     self.process.callStack.pop()
-                    print(self.process.name + " pop " + self.process.callStack.peek().name + " off call stack for unhanded exception")
+                    print(self.process.name + " pop " + self.process.callStack.peek().entry.name + " off call stack for unhanded exception")
                     #for the user to let me knowww let me knowwww
 
 
@@ -86,30 +87,30 @@ class Node:
 class LinkedStack:
     """268 Required Stack that interacts with Gibbons Nodes"""
     def __init__(self):
-        self._myNodes = [] #make it "hidden"
+        self._top = None
     def push(self, entry):
         """Put the entry at the top of the Stack."""
-        self._myNodes[0:0] = [Node(entry)] #set the entry at a : iterator in a list at the zeroeth place zero times and set it equal to copy each value of entry
-        self._myNodes[0].next = self._myNodes[1] #set your node to the next node in the order
-        #this makes the linked list both sequentially and programmatically linked
+        previousNode = self._top #save the previous (formlery top) node
+        self._top = Node(entry) #set the entry at a : iterator in a list at the zeroeth place zero times and set it equal to copy each value of entry
+        self._top.next = previousNode
+        #set previous node as next node fro linked list
     def pop(self):
         """Remove and return the value at the top of the stack, 
         raise RuntimeError otherwise"""
-        try:
-            returnValue = self._myNodes[0] #save the value
-            self._myNodes.pop(0)#remove the top index
-            return returnValue
-        except IndexError:
-            raise RuntimeError("Stack is empty")
+        returnValue = self._top #save the value
+            #Errors should never be thrown silently
+            #The Zen of Python
+        if returnValue == None:
+            raise RuntimError("Can't remove from an empty stack")
+        self._top = self._top.next #remove the top index
+        return returnValue
     def peek(self):
         """Return value at the top of the stack otherwise RuntimeError"""
-        try:
-            return self._myNodes[0].entry #returns it as an entry (from Node)
-        except IndexError:
-            raise RuntimError("Stack is empty")
+        return self._top if self._top != None else RuntimeError("Can't remove from an empty stack")
+        #returns it as an entry (from Node) unless it's None, which means a RuntimeError
     def is_empty(self):
         """Returns true if stack is empty, false otherwise"""
-        return True if len(self._myNodes) == 0 else False
+        return True if self._top == None else False
 
 if __name__ == "__main__":
     #someone's running this as a lab
